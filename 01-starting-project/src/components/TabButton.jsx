@@ -1,4 +1,4 @@
-export default function TabButton({ title, isActive, onSelect, children }) {
+export default function TabButton({ title, onSelect, children }) {
 	return (
 		<li>
 			<button onClick={onSelect}>{children}</button>
