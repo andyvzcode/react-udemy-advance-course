@@ -1,11 +1,15 @@
+import { useState } from "react";
+
 import { CORE_CONCEPTS } from "./data";
 import Header from "./components/Header/Header";
 import CoreConcept from "./components/CoreConcept/CoreConcept";
 import TabButton from "./components/TabButton";
+import { EXAMPLES } from "./data";
 
 function App() {
+	const [selectedTopic, setSelectedTopic] = useState("components");
 	const handlerSelect = (SelectedButton) => {
-		console.log(SelectedButton);
+		setSelectedTopic(SelectedButton);
 	};
 	return (
 		<div>
@@ -41,6 +45,13 @@ function App() {
 							State{" "}
 						</TabButton>
 					</menu>
+					<div id="tab-content">
+						<h3>{EXAMPLES[selectedTopic]?.title}</h3>
+						<p>{EXAMPLES[selectedTopic]?.description}</p>
+						<pre>
+							<code>{EXAMPLES[selectedTopic]?.code}</code>
+						</pre>
+					</div>
 				</section>
 			</main>
 		</div>
