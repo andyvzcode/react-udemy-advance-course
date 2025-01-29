@@ -1,4 +1,4 @@
-import TabButton from "../components/TabButton";
+import TabButton from "./TabButton";
 
 export default function Tabs({
 	children,
