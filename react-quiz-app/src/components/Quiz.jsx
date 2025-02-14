@@ -2,21 +2,35 @@ import { useState, useCallback } from "react";
 import QUESTIONS from "../questions.js";
 import quizCompleteImg from "../assets/quiz-complete.png";
 import QuestionTimer from "./QuiestionTimer.jsx";
-import { use } from "react";
 export default function Quiz() {
+	const [answeState, setAnswerState] = useState("");
 	const [userAnswers, setUserAnswers] = useState([]);
-	const activeQuestionIndex = userAnswers.length;
+	const activeQuestionIndex =
+		answeState === "" ? userAnswers.length : userAnswers.length - 1;
 
+	console.log(activeQuestionIndex);
 	const quizIsComplete = activeQuestionIndex === QUESTIONS.length;
 
-	const handleSelectAnswer = useCallback(function handleSelectAnswer(
-		selectedAnswer
-	) {
-		setUserAnswers((prevUserAnswers) => {
-			return [...prevUserAnswers, selectedAnswer];
-		});
-	},
-	[]);
+	const handleSelectAnswer = useCallback(
+		function handleSelectAnswer(selectedAnswer) {
+			setAnswerState("answered");
+			setUserAnswers((prevUserAnswers) => {
+				return [...prevUserAnswers, selectedAnswer];
+			});
+			setTimeout(() => {
+				if (selectedAnswer === QUESTIONS[activeQuestionIndex].answers[0]) {
+					setAnswerState("correct");
+				} else {
+					setAnswerState("wrong");
+				}
+
+				setTimeout(() => {
+					setAnswerState("");
+				}, 2000);
+			}, 1000);
+		},
+		[activeQuestionIndex]
+	);
 
 	const handleSkipAnswer = useCallback(
 		() => handleSelectAnswer(null),
@@ -38,16 +52,34 @@ export default function Quiz() {
 	return (
 		<div id="quiz">
 			<div id="question">
-				<QuestionTimer timeout={10000} onTimeout={handleSkipAnswer} />
+				<QuestionTimer
+					key={activeQuestionIndex}
+					timeout={10000}
+					onTimeout={handleSkipAnswer}
+				/>
 				<h2>{QUESTIONS[activeQuestionIndex].text}</h2>
 				<ul id="answers">
-					{shuffledAnswers.map((answer) => (
-						<li key={answer} className="answer">
-							<button onClick={() => handleSelectAnswer(answer)}>
-								{answer}
-							</button>
-						</li>
-					))}
+					{shuffledAnswers.map((answer) => {
+						const isSelected = userAnswers[activeQuestionIndex - 1] === answer;
+						let cssClasess = "";
+						if (answeState === "answered" && isSelected) {
+							cssClasess = "selected";
+						}
+						if (answeState === "correct" || answeState === "wrong") {
+							cssClasess = answeState;
+						}
+
+						return (
+							<li key={answer} className="answer">
+								<button
+									onClick={() => handleSelectAnswer(answer)}
+									className={cssClasess}
+								>
+									{answer}
+								</button>
+							</li>
+						);
+					})}
 				</ul>
 			</div>
 		</div>
